@@ -23,7 +23,7 @@ limitations under the License. */
 #include "paddle/fluid/operators/math/math_function.h"
 #include "paddle/fluid/operators/math/pooling.h"
 #if defined(__HIPCC__) || defined(__NVCC__)
-#include "paddle/fluid/operators/reduce_ops/cub_reduce.h"
+#include "paddle/fluid/operators/reduce_ops/reduce_op.cuh"
 #endif
 
 namespace paddle {
@@ -215,7 +215,7 @@ class PoolKernel : public framework::OpKernel<T> {
               adaptive) {  // for adaptive_avg_pool2d && output_size == 1
 #if defined(__HIPCC__) || defined(__NVCC__)
             auto stream = dev_ctx.stream();
-            TensorReduce<T, T, cub::Sum, DivideFunctor<T>>(
+            TensorReduceFunc<T, T, cub::Sum, DivideFunctor<T>>(
                 *in_x, out, reduce_dim, static_cast<T>(0), cub::Sum(),
                 DivideFunctor<T>(reduce_num), stream);
 #else  // for cpu
