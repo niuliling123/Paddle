@@ -217,7 +217,8 @@ class PoolKernel : public framework::OpKernel<T> {
             auto stream = dev_ctx.stream();
             TensorReduceFunc<T, T, cub::Sum, DivideFunctor<T>>(
                 *in_x, out, reduce_dim, static_cast<T>(0), cub::Sum(),
-                DivideFunctor<T>(reduce_num), stream);
+                DivideFunctor<T>(reduce_num), DivideFunctor<T>(reduce_num),
+                stream);
 #else  // for cpu
             paddle::operators::math::Pool2dFunctor<
                 DeviceContext, paddle::operators::math::AvgPool<T>, T>
